@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Search and book flights worldwide with FlightFinder - Your premium flight search engine">
+    <title>FlightFinder - Search Flights Worldwide</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'flights/style.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="stars"></div>
+    <div class="stars2"></div>
+    <div class="stars3"></div>
+
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 5L35 12.5V27.5L20 35L5 27.5V12.5L20 5Z" stroke="url(#gradient)" stroke-width="2"
+                        fill="none" />
+                    <path d="M20 15L28 20L20 25L12 20L20 15Z" fill="url(#gradient)" />
+                    <defs>
+                        <linearGradient id="gradient" x1="5" y1="5" x2="35" y2="35">
+                            <stop offset="0%" stop-color="#667eea" />
+                            <stop offset="100%" stop-color="#764ba2" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <h1>FlightFinder</h1>
+            </div>
+            <nav class="nav">
+                <a href="/" class="nav-link active">Search</a>
+            </nav>
+        </header>
+
+        <main class="main-content">
+            <div class="hero">
+                <h2 class="hero-title">Discover Your Next Adventure</h2>
+                <p class="hero-subtitle">Search thousands of flights worldwide. Find the best deals for your journey.
+                </p>
+            </div>
+
+            <div class="search-card glass">
+                <form method="POST" action="{% url 'search' %}" class="search-form">
+                    {% csrf_token %}
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="origin">From</label>
+                            <input type="text" id="origin" name="origin" placeholder="JFK, LAX, LHR..." required
+                                maxlength="3" pattern="[A-Za-z]{3}" class="input-field">
+                            <small class="input-hint">3-letter airport code</small>
+                        </div>
+
+                        <div class="swap-button-container">
+                            <button type="button" class="swap-button" onclick="swapAirports()">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path d="M7 16V4M7 4L3 8M7 4L11 8" stroke-width="2" stroke-linecap="round" />
+                                    <path d="M17 8V20M17 20L21 16M17 20L13 16" stroke-width="2"
+                                        stroke-linecap="round" />
+                                </svg>
+                            </button>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="destination">To</label>
+                            <input type="text" id="destination" name="destination" placeholder="JFK, LAX, LHR..."
+                                required maxlength="3" pattern="[A-Za-z]{3}" class="input-field">
+                            <small class="input-hint">3-letter airport code</small>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="departure_date">Departure Date</label>
+                            <input type="date" id="departure_date" name="departure_date" required class="input-field"
+                                min="{{ today }}">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="adults">Passengers</label>
+                            <select id="adults" name="adults" class="input-field">
+                                <option value="1">1 Adult</option>
+                                <option value="2">2 Adults</option>
+                                <option value="3">3 Adults</option>
+                                <option value="4">4 Adults</option>
+                                <option value="5">5 Adults</option>
+                                <option value="6">6 Adults</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="search-button">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <circle cx="8" cy="8" r="6" />
+                            <path d="M13 13L18 18" stroke-linecap="round" />
+                        </svg>
+                        <span>Search Flights</span>
+                    </button>
+                </form>
+            </div>
+
+            <div class="features">
+                <div class="feature-card glass">
+                    <div class="feature-icon">✈️</div>
+                    <h3>Global Coverage</h3>
+                    <p>Search flights from thousands of airlines worldwide</p>
+                </div>
+                <div class="feature-card glass">
+                    <div class="feature-icon">💰</div>
+                    <h3>Best Prices</h3>
+                    <p>Compare prices and find the best deals instantly</p>
+                </div>
+                <div class="feature-card glass">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Real-time Results</h3>
+                    <p>Live flight data updated in real-time</p>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>&copy; 2026 FlightFinder. Powered by Amadeus API.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Set minimum date to today
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('departure_date').setAttribute('min', today);
+
+        // Swap airports function
+        function swapAirports() {
+            const origin = document.getElementById('origin');
+            const destination = document.getElementById('destination');
+            const temp = origin.value;
+            origin.value = destination.value;
+            destination.value = temp;
+        }
+
+        // Auto-uppercase airport codes
+        document.getElementById('origin').addEventListener('input', function (e) {
+            e.target.value = e.target.value.toUpperCase();
+        });
+        document.getElementById('destination').addEventListener('input', function (e) {
+            e.target.value = e.target.value.toUpperCase();
+        });
+
+        // Add animation on form focus
+        const inputs = document.querySelectorAll('.input-field');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function () {
+                this.parentElement.classList.add('focused');
+            });
+            input.addEventListener('blur', function () {
+                this.parentElement.classList.remove('focused');
+            });
+        });
+    </script>
+</body>
+
+</html>

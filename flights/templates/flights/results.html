@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Flight search results - FlightFinder">
+    <title>Flight Results - FlightFinder</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'flights/style.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="stars"></div>
+    <div class="stars2"></div>
+    <div class="stars3"></div>
+
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 5L35 12.5V27.5L20 35L5 27.5V12.5L20 5Z" stroke="url(#gradient)" stroke-width="2"
+                        fill="none" />
+                    <path d="M20 15L28 20L20 25L12 20L20 15Z" fill="url(#gradient)" />
+                    <defs>
+                        <linearGradient id="gradient" x1="5" y1="5" x2="35" y2="35">
+                            <stop offset="0%" stop-color="#667eea" />
+                            <stop offset="100%" stop-color="#764ba2" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <h1>FlightFinder</h1>
+            </div>
+            <nav class="nav">
+                <a href="/" class="nav-link">Search</a>
+            </nav>
+        </header>
+
+        <main class="main-content">
+            {% if error %}
+            <div class="error-card glass">
+                <div class="error-icon">⚠️</div>
+                <h2>Oops! Something went wrong</h2>
+                <p>{{ error }}</p>
+                <a href="/" class="back-button">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M15 10H5M5 10L10 15M5 10L10 5" stroke-linecap="round" />
+                    </svg>
+                    Back to Search
+                </a>
+            </div>
+            {% else %}
+            <div class="results-header glass">
+                <div class="route-info">
+                    <div class="route-airports">
+                        <span class="airport-code">{{ origin }}</span>
+                        <svg width="30" height="20" viewBox="0 0 30 20" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M5 10H25M25 10L20 5M25 10L20 15" stroke-linecap="round" />
+                        </svg>
+                        <span class="airport-code">{{ destination }}</span>
+                    </div>
+                    <p class="route-date">{{ departure_date }}</p>
+                </div>
+                <div class="results-count">
+                    <span class="count-number">{{ flights|length }}</span>
+                    <span class="count-label">flights found</span>
+                </div>
+            </div>
+
+            {% if flights %}
+            <div class="results-container">
+                {% for flight in flights %}
+                <div class="flight-card glass">
+                    <div class="flight-header">
+                        <div class="airline-info">
+                            <div class="airline-logo">{{ flight.airline }}</div>
+                            <div class="airline-details">
+                                <h3 class="airline-name">{{ flight.airline }}</h3>
+                                <p class="flight-number">Flight {{ flight.flight_number }}</p>
+                            </div>
+                        </div>
+                        <div class="flight-price">
+                            <span class="price-amount">{{ flight.price }}</span>
+                            <span class="price-currency">{{ flight.currency }}</span>
+                        </div>
+                    </div>
+
+                    <div class="flight-details">
+                        <div class="flight-time">
+                            <div class="time-block">
+                                <span class="time-value">{{ flight.departure_time|slice:":10" }}</span>
+                                <span class="time-label">Departure</span>
+                                <span class="airport-label">{{ flight.departure_airport }}</span>
+                            </div>
+
+                            <div class="flight-duration">
+                                <div class="duration-line">
+                                    <div class="duration-dot"></div>
+                                    <div class="duration-bar"></div>
+                                    <div class="duration-dot"></div>
+                                </div>
+                                <span class="duration-text">{{ flight.duration|slice:"2:" }}</span>
+                                {% if flight.stops == 0 %}
+                                <span class="stops-badge direct">Direct</span>
+                                {% else %}
+                                <span class="stops-badge">{{ flight.stops }} stop{{ flight.stops|pluralize }}</span>
+                                {% endif %}
+                            </div>
+
+                            <div class="time-block">
+                                <span class="time-value">{{ flight.arrival_time|slice:":10" }}</span>
+                                <span class="time-label">Arrival</span>
+                                <span class="airport-label">{{ flight.arrival_airport }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flight-footer">
+                        <div class="flight-info-text">
+                            <small style="color: #a0aec0;">Booking functionality coming soon</small>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="no-results glass">
+                <div class="no-results-icon">🔍</div>
+                <h2>No Flights Found</h2>
+                <p>We couldn't find any flights for your search criteria. Try different dates or airports.</p>
+                <a href="/" class="back-button">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M15 10H5M5 10L10 15M5 10L10 5" stroke-linecap="round" />
+                    </svg>
+                    New Search
+                </a>
+            </div>
+            {% endif %}
+
+            <div class="search-again glass">
+                <a href="/" class="new-search-button">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M15 10H5M5 10L10 15M5 10L10 5" stroke-linecap="round" />
+                    </svg>
+                    Start New Search
+                </a>
+            </div>
+            {% endif %}
+        </main>
+
+        <footer class="footer">
+            <p>&copy; 2026 FlightFinder. Powered by Amadeus API.</p>
+        </footer>
+    </div>
+</body>
+
+</html>
