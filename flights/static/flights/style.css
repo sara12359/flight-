@@ -8,19 +8,24 @@
 :root {
     --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-    --dark-bg: #0a0e27;
-    --card-bg: rgba(255, 255, 255, 0.05);
-    --text-primary: #ffffff;
-    --text-secondary: #a0aec0;
+    --dark-bg: #f7fafc;
+    /* Changed to light gray */
+    --card-bg: rgba(255, 255, 255, 0.7);
+    /* Increased opacity for light mode */
+    --text-primary: #2d3748;
+    /* Changed to dark gray */
+    --text-secondary: #718096;
+    /* Changed to medium gray */
     --accent-color: #667eea;
     --success-color: #48bb78;
     --error-color: #f56565;
+    --input-bg: #ffffff;
+    --input-border: #e2e8f0;
 }
 
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: #0f172a;
-    /* Solid dark slate blue */
+    background: var(--dark-bg);
     color: var(--text-primary);
     min-height: 100vh;
     overflow-x: hidden;
@@ -45,12 +50,13 @@ body {
 
 /* Glassmorphism Effect */
 .glass {
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--card-bg);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.8);
     border-radius: 20px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+    /* Softer shadow */
 }
 
 /* Header */
@@ -180,8 +186,8 @@ body {
 
 .input-field {
     padding: 16px 20px;
-    background: rgba(255, 255, 255, 0.08);
-    border: 2px solid rgba(255, 255, 255, 0.1);
+    background: var(--input-bg);
+    border: 2px solid var(--input-border);
     border-radius: 12px;
     color: var(--text-primary);
     font-size: 16px;
@@ -191,9 +197,10 @@ body {
 }
 
 .input-field:focus {
-    background: rgba(255, 255, 255, 0.12);
+    background: #ffffff;
     border-color: var(--accent-color);
     transform: scale(1.02);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
 .input-field::placeholder {
@@ -373,7 +380,7 @@ body {
     align-items: center;
     margin-bottom: 24px;
     padding-bottom: 24px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .airline-info {
@@ -519,12 +526,12 @@ body {
 }
 
 .details-button {
-    background: rgba(255, 255, 255, 0.08);
+    background: #e2e8f0;
     color: var(--text-primary);
 }
 
 .details-button:hover {
-    background: rgba(255, 255, 255, 0.12);
+    background: #cbd5e0;
 }
 
 .book-button {
