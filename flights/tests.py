@@ -48,7 +48,7 @@ class FlightSearchTests(SimpleTestCase):
         ]
         mock_search.return_value = mock_flights
 
-        response = self.client.post('/search', {
+        response = self.client.post('/search/', {
             'origin': 'JFK',
             'destination': 'LHR',
             'departure_date': '2023-10-10',

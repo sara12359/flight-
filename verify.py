@@ -26,7 +26,7 @@ def run_manual_test():
             mock_search.return_value = mock_flights
             
             try:
-                response = client.post('/search', {
+                response = client.post('/search/', {
                     'origin': 'JFK',
                     'destination': 'LHR',
                     'departure_date': '2023-10-10',
