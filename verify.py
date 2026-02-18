@@ -1,0 +1,14 @@
+import os
+import django
+import unittest
+from django.conf import settings
+
+# Configure Django settings
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'flight_project.settings')
+django.setup()
+
+from flights.tests import FlightSearchTests
+
+if __name__ == '__main__':
+    suite = unittest.TestLoader().loadTestsFromTestCase(FlightSearchTests)
+    unittest.TextTestRunner(verbosity=2).run(suite)
