@@ -9,6 +9,7 @@ django.setup()
 
 from flights.tests import FlightSearchTests
 
+import sys
 if __name__ == '__main__':
     suite = unittest.TestLoader().loadTestsFromTestCase(FlightSearchTests)
-    unittest.TextTestRunner(verbosity=2).run(suite)
+    unittest.TextTestRunner(stream=sys.stdout, verbosity=2).run(suite)
