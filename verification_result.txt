@@ -1,7 +1,0 @@
-Response status: 200
-Exception occurred: 'NoneType' object is not subscriptable
-Traceback (most recent call last):
-  File "C:\Users\Admin\Desktop\FLIGHT\flight-\verify.py", line 42, in run_manual_test
-    flights = response.context['flights']
-              ~~~~~~~~~~~~~~~~^^^^^^^^^^^
-TypeError: 'NoneType' object is not subscriptable
