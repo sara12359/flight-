@@ -75,7 +75,12 @@
             {% if flights %}
             <div class="results-container">
                 {% for flight in flights %}
-                <div class="flight-card glass">
+                <div class="flight-card glass {% if flight.is_cheapest %}best-deal-card{% endif %}">
+                    {% if flight.is_cheapest %}
+                    <div class="best-deal-badge">
+                        <span class="badge-icon">💎</span> Best Deal
+                    </div>
+                    {% endif %}
                     <div class="flight-header">
                         <div class="airline-info">
                             <div class="airline-logo">{{ flight.airline }}</div>

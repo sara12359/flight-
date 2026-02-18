@@ -73,6 +73,16 @@ def search(request):
                     # Skip flights with parsing errors
                     continue
             
+            # Find the lowest price
+            if processed_flights:
+                try:
+                    min_price = min(float(flight['price']) for flight in processed_flights)
+                    for flight in processed_flights:
+                        flight['is_cheapest'] = float(flight['price']) == min_price
+                except ValueError:
+                    # Handle cases where price might not be a valid float
+                    pass
+            
             return render(request, 'flights/results.html', {
                 'flights': processed_flights,
                 'origin': origin.upper(),

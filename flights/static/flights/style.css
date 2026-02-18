@@ -703,3 +703,47 @@ body {
         font-size: 14px;
     }
 }
+
+/* Best Deal Highlight */
+.best-deal-card {
+    border: 2px solid var(--success-color);
+    box-shadow: 0 8px 32px rgba(72, 187, 120, 0.2);
+    position: relative;
+    overflow: visible;
+    /* Allow badge to overflow */
+}
+
+.best-deal-badge {
+    position: absolute;
+    top: -15px;
+    right: 20px;
+    background: var(--success-color);
+    color: white;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.badge-icon {
+    font-size: 16px;
+}
+
+@keyframes popIn {
+    from {
+        opacity: 0;
+        transform: scale(0.5) translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
