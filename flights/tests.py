@@ -51,7 +51,7 @@ class FlightSearchTests(SimpleTestCase):
         response = self.client.post('/search/', {
             'origin': 'JFK',
             'destination': 'LHR',
-            'departure_date': '2023-10-10',
+            'departure_date': '2026-12-25',
             'adults': 1
         })
 
