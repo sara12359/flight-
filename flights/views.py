@@ -1,7 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import JsonResponse
+from django.contrib import messages
 from .amadeus_client import AmadeusClient
 from datetime import datetime
+import re
 
 
 # Initialize Amadeus client with your credentials
@@ -18,17 +20,50 @@ def index(request):
 def search(request):
     """Handle flight search requests."""
     if request.method == 'POST':
-        origin = request.POST.get('origin', '')
-        destination = request.POST.get('destination', '')
+        origin = request.POST.get('origin', '').strip().upper()
+        destination = request.POST.get('destination', '').strip().upper()
         departure_date = request.POST.get('departure_date', '')
-        adults = int(request.POST.get('adults', 1))
+        adults_str = request.POST.get('adults', '1')
         
-        # Validate inputs
+        # Validation
+        errors = []
+        
+        # Check for empty fields
         if not all([origin, destination, departure_date]):
-            return render(request, 'flights/results.html', {
-                'error': 'Please fill in all required fields.',
-                'flights': []
-            })
+            errors.append('Please fill in all required fields.')
+            
+        # Validate IATA codes (3 letters)
+        iata_pattern = re.compile(r'^[A-Z]{3}$')
+        if origin and not iata_pattern.match(origin):
+            errors.append(f'Invalid origin code: {origin}. Must be a 3-letter IATA code.')
+        if destination and not iata_pattern.match(destination):
+            errors.append(f'Invalid destination code: {destination}. Must be a 3-letter IATA code.')
+            
+        # Check if origin and destination are the same
+        if origin and destination and origin == destination:
+            errors.append('Origin and destination cannot be the same.')
+            
+        # Validate date (not in past)
+        if departure_date:
+            try:
+                dept_date_obj = datetime.strptime(departure_date, '%Y-%m-%d').date()
+                if dept_date_obj < datetime.now().date():
+                    errors.append('Departure date cannot be in the past.')
+            except ValueError:
+                errors.append('Invalid date format.')
+        
+        # Validate adults
+        try:
+            adults = int(adults_str)
+            if adults < 1 or adults > 9:
+                errors.append('Number of adults must be between 1 and 9.')
+        except ValueError:
+            errors.append('Invalid number of passengers.')
+
+        if errors:
+            for error in errors:
+                messages.error(request, error)
+            return redirect('index')
         
         try:
             # Search for flights
@@ -69,7 +104,7 @@ def search(request):
                                 'currency': price.get('currency', 'USD'),
                             }
                             processed_flights.append(flight_data)
-                except Exception as e:
+                except Exception:
                     # Skip flights with parsing errors
                     continue
             
@@ -85,15 +120,18 @@ def search(request):
             
             return render(request, 'flights/results.html', {
                 'flights': processed_flights,
-                'origin': origin.upper(),
-                'destination': destination.upper(),
+                'origin': origin,
+                'destination': destination,
                 'departure_date': departure_date,
                 'error': None
             })
             
         except Exception as e:
             return render(request, 'flights/results.html', {
-                'error': f'Error searching flights: {str(e)}',
+                'error': str(e),
+                'origin': origin,
+                'destination': destination,
+                'departure_date': departure_date,
                 'flights': []
             })
     
