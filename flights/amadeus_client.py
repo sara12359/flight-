@@ -36,7 +36,15 @@ class AmadeusClient:
             
             return self.access_token
         except requests.exceptions.RequestException as e:
-            raise Exception(f"Failed to get access token: {str(e)}")
+            error_msg = f"Failed to get access token: {str(e)}"
+            if e.response is not None:
+                try:
+                    error_data = e.response.json()
+                    if 'error_description' in error_data:
+                        error_msg = f"Authentication error: {error_data['error_description']}"
+                except ValueError:
+                    pass
+            raise Exception(error_msg)
     
     def search_flights(self, origin, destination, departure_date, adults=1, max_results=10):
         """
@@ -75,4 +83,15 @@ class AmadeusClient:
             
             return data.get('data', [])
         except requests.exceptions.RequestException as e:
-            raise Exception(f"Flight search failed: {str(e)}")
+            error_msg = f"Flight search failed: {str(e)}"
+            if e.response is not None:
+                try:
+                    error_data = e.response.json()
+                    errors = error_data.get('errors', [])
+                    if errors:
+                        detail = errors[0].get('detail', '')
+                        if detail:
+                            error_msg = f"API Error: {detail}"
+                except (ValueError, KeyError, IndexError):
+                    pass
+            raise Exception(error_msg)
