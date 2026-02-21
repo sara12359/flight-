@@ -263,36 +263,72 @@
         </footer>
     </div>
 
+    <!-- Tom Select JS -->
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
+
     <script>
         // Set minimum date to today
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('departure_date').setAttribute('min', today);
+        const todayElement = document.getElementById('departure_date');
+        const todayValue = new Date().toISOString().split('T')[0];
+        todayElement.setAttribute('min', todayValue);
+
+        // Tom Select Initialization
+        const tsConfig = {
+            valueField: 'id',
+            labelField: 'label',
+            searchField: 'label',
+            // Fetch remote data
+            load: function (query, callback) {
+                if (!query.length) return callback();
+                fetch(`/airport-search/?q=${encodeURIComponent(query)}`)
+                    .then(response => response.json())
+                    .then(json => {
+                        callback(json.locations);
+                    }).catch(() => {
+                        callback();
+                    });
+            },
+            // Custom rendering
+            render: {
+                option: function (item, escape) {
+                    return `<div>
+                        <span class="ts-label">${escape(item.label)}</span>
+                        <span class="ts-type">${escape(item.subType)}</span>
+                    </div>`;
+                },
+                item: function (item, escape) {
+                    return `<div>${escape(item.id)}</div>`;
+                }
+            }
+        };
+
+        const originTS = new TomSelect('#origin', tsConfig);
+        const destinationTS = new TomSelect('#destination', tsConfig);
 
         // Swap airports function
         function swapAirports() {
-            const origin = document.getElementById('origin');
-            const destination = document.getElementById('destination');
-            const temp = origin.value;
-            origin.value = destination.value;
-            destination.value = temp;
+            const originVal = originTS.getValue();
+            const destVal = destinationTS.getValue();
+
+            // Get current options before swapping
+            const originOption = originTS.options[originVal];
+            const destOption = destinationTS.options[destVal];
+
+            if (destOption) originTS.addOption(destOption);
+            if (originOption) destinationTS.addOption(originOption);
+
+            originTS.setValue(destVal);
+            destinationTS.setValue(originVal);
         }
 
-        // Auto-uppercase airport codes
-        document.getElementById('origin').addEventListener('input', function (e) {
-            e.target.value = e.target.value.toUpperCase();
-        });
-        document.getElementById('destination').addEventListener('input', function (e) {
-            e.target.value = e.target.value.toUpperCase();
-        });
-
         // Add animation on form focus
-        const inputs = document.querySelectorAll('.input-field');
+        const inputs = document.querySelectorAll('.input-field, .ts-control');
         inputs.forEach(input => {
             input.addEventListener('focus', function () {
-                this.parentElement.classList.add('focused');
+                this.closest('.form-group').classList.add('focused');
             });
             input.addEventListener('blur', function () {
-                this.parentElement.classList.remove('focused');
+                this.closest('.form-group').classList.remove('focused');
             });
         });
     </script>
