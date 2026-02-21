@@ -95,3 +95,47 @@ class AmadeusClient:
                 except (ValueError, KeyError, IndexError):
                     pass
             raise Exception(error_msg)
+
+    def search_locations(self, keyword):
+        """
+        Search for locations (airports and cities).
+        
+        Args:
+            keyword: Keyword to search for (e.g., 'LON')
+        
+        Returns:
+            List of location results
+        """
+        token = self.get_token()
+        
+        headers = {
+            'Authorization': f'Bearer {token}'
+        }
+        
+        params = {
+            'subType': 'AIRPORT,CITY',
+            'keyword': keyword,
+            'view': 'LIGHT'
+        }
+        
+        url = f"{self.base_url}/v1/reference-data/locations"
+        
+        try:
+            response = requests.get(url, headers=headers, params=params)
+            response.raise_for_status()
+            data = response.json()
+            
+            return data.get('data', [])
+        except requests.exceptions.RequestException as e:
+            error_msg = f"Location search failed: {str(e)}"
+            if e.response is not None:
+                try:
+                    error_data = e.response.json()
+                    errors = error_data.get('errors', [])
+                    if errors:
+                        detail = errors[0].get('detail', '')
+                        if detail:
+                            error_msg = f"API Error: {detail}"
+                except (ValueError, KeyError, IndexError):
+                    pass
+            raise Exception(error_msg)
