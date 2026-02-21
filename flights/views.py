@@ -139,32 +139,5 @@ def search(request):
     return render(request, 'flights/index.html')
 
 
-def airport_search(request):
-    """API endpoint for airport autocomplete."""
-    query = request.GET.get('q', '').strip()
-    if len(query) < 2:
-        return JsonResponse({'locations': []})
-    
-    try:
-        locations = amadeus.search_locations(query)
-        results = []
-        for loc in locations:
-            # We want to show both city and airport name if available
-            name = loc.get('name', '')
-            iata = loc.get('iataCode', '')
-            sub_type = loc.get('subType', '')
-            city = loc.get('address', {}).get('cityName', '')
-            
-            label = f"{name} ({iata})"
-            if city and city.lower() != name.lower():
-                label = f"{city}, {label}"
-                
-            results.append({
-                'id': iata,
-                'label': label,
-                'subType': sub_type
-            })
-            
-        return JsonResponse({'locations': results})
-    except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
+    # If GET request, redirect to home
+    return render(request, 'flights/index.html')
