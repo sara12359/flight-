@@ -273,10 +273,26 @@
         todayElement.setAttribute('min', todayValue);
 
         // Tom Select Initialization
+        const popularAirports = [
+            { id: 'ATL', label: 'Atlanta (ATL)', subType: 'AIRPORT' },
+            { id: 'AMS', label: 'Amsterdam (AMS)', subType: 'AIRPORT' },
+            { id: 'BKK', label: 'Bangkok (BKK)', subType: 'AIRPORT' },
+            { id: 'CDG', label: 'Paris (CDG)', subType: 'AIRPORT' },
+            { id: 'DXB', label: 'Dubai (DXB)', subType: 'AIRPORT' },
+            { id: 'FRA', label: 'Frankfurt (FRA)', subType: 'AIRPORT' },
+            { id: 'HND', label: 'Tokyo (HND)', subType: 'AIRPORT' },
+            { id: 'IST', label: 'Istanbul (IST)', subType: 'AIRPORT' },
+            { id: 'JFK', label: 'New York (JFK)', subType: 'AIRPORT' },
+            { id: 'LAX', label: 'Los Angeles (LAX)', subType: 'AIRPORT' },
+            { id: 'LHR', label: 'London (LHR)', subType: 'AIRPORT' },
+            { id: 'SIN', label: 'Singapore (SIN)', subType: 'AIRPORT' }
+        ];
+
         const tsConfig = {
             valueField: 'id',
             labelField: 'label',
             searchField: 'label',
+            options: popularAirports,
             // Fetch remote data
             load: function (query, callback) {
                 if (!query.length) return callback();
@@ -288,6 +304,18 @@
                         callback();
                     });
             },
+            // Allow manual code entry
+            create: function (input) {
+                const code = input.toUpperCase();
+                return {
+                    id: code,
+                    label: `Custom Code: ${code}`,
+                    subType: 'MANUAL ENTRY'
+                };
+            },
+            createFilter: function (input) {
+                return input.length === 3 && /^[A-Za-z]+$/.test(input);
+            },
             // Custom rendering
             render: {
                 option: function (item, escape) {
@@ -298,6 +326,9 @@
                 },
                 item: function (item, escape) {
                     return `<div>${escape(item.id)}</div>`;
+                },
+                option_create: function (data, escape) {
+                    return '<div class="create">Add custom code <strong>' + escape(data.input) + '</strong>&hellip;</div>';
                 }
             }
         };
