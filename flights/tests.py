@@ -70,3 +70,40 @@ class FlightSearchTests(SimpleTestCase):
         
         flags = [f.get('is_cheapest', False) for f in flights]
         self.assertEqual(flags, [False, True, False])
+
+    @patch('flights.views.amadeus.search_locations')
+    def test_airport_search_view(self, mock_search):
+        # Mock location data
+        mock_locations = [
+            {
+                'name': 'HEATHROW',
+                'iataCode': 'LHR',
+                'subType': 'AIRPORT',
+                'address': {'cityName': 'LONDON'}
+            },
+            {
+                'name': 'GATWICK',
+                'iataCode': 'LGW',
+                'subType': 'AIRPORT',
+                'address': {'cityName': 'LONDON'}
+            }
+        ]
+        mock_search.return_value = mock_locations
+
+        response = self.client.get('/airport-search/', {'q': 'lon'})
+
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertIn('locations', data)
+        self.assertEqual(len(data['locations']), 2)
+        
+        self.assertEqual(data['locations'][0]['id'], 'LHR')
+        self.assertEqual(data['locations'][0]['label'], 'LONDON, HEATHROW (LHR)')
+        self.assertEqual(data['locations'][1]['id'], 'LGW')
+        self.assertEqual(data['locations'][1]['label'], 'LONDON, GATWICK (LGW)')
+
+    def test_airport_search_query_too_short(self):
+        response = self.client.get('/airport-search/', {'q': 'l'})
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(len(data['locations']), 0)
