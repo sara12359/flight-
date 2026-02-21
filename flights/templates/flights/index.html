@@ -62,15 +62,19 @@
                 <form method="POST" action="{% url 'search' %}" class="search-form">
                     {% csrf_token %}
                     <div class="form-row">
-                        <div class="form-group">
+                        <div class="form-group airport-search-group">
                             <label for="origin">From</label>
-                            <input type="text" id="origin" name="origin" placeholder="JFK, LAX, LHR..." required
-                                maxlength="3" pattern="[A-Za-z]{3}" class="input-field">
+                            <div class="input-wrapper">
+                                <input type="text" id="origin" name="origin" placeholder="Search city or airport..."
+                                    required maxlength="3" autocomplete="off" class="input-field airport-input">
+                                <div id="origin-results" class="search-results glass hidden"></div>
+                            </div>
                             <small class="input-hint">3-letter airport code</small>
                         </div>
 
                         <div class="swap-button-container">
-                            <button type="button" class="swap-button" onclick="swapAirports()">
+                            <button type="button" class="swap-button" onclick="swapAirports()"
+                                aria-label="Swap airports">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                     <path d="M7 16V4M7 4L3 8M7 4L11 8" stroke-width="2" stroke-linecap="round" />
                                     <path d="M17 8V20M17 20L21 16M17 20L13 16" stroke-width="2"
@@ -79,10 +83,14 @@
                             </button>
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group airport-search-group">
                             <label for="destination">To</label>
-                            <input type="text" id="destination" name="destination" placeholder="JFK, LAX, LHR..."
-                                required maxlength="3" pattern="[A-Za-z]{3}" class="input-field">
+                            <div class="input-wrapper">
+                                <input type="text" id="destination" name="destination"
+                                    placeholder="Search city or airport..." required maxlength="3" autocomplete="off"
+                                    class="input-field airport-input">
+                                <div id="destination-results" class="search-results glass hidden"></div>
+                            </div>
                             <small class="input-hint">3-letter airport code</small>
                         </div>
                     </div>
@@ -163,6 +171,73 @@
         document.getElementById('destination').addEventListener('input', function (e) {
             e.target.value = e.target.value.toUpperCase();
         });
+
+        // Airport Autocomplete Logic
+        function setupAutocomplete(inputId, resultsId) {
+            const input = document.getElementById(inputId);
+            const results = document.getElementById(resultsId);
+            let debounceTimer;
+
+            input.addEventListener('input', function () {
+                clearTimeout(debounceTimer);
+                const query = this.value.trim();
+
+                if (query.length < 2) {
+                    results.classList.add('hidden');
+                    return;
+                }
+
+                debounceTimer = setTimeout(() => {
+                    fetch(`/airport-search/?q=${encodeURIComponent(query)}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.locations && data.locations.length > 0) {
+                                results.innerHTML = '';
+                                data.locations.forEach(loc => {
+                                    const div = document.createElement('div');
+                                    div.className = 'search-result-item';
+                                    div.innerHTML = `
+                                        <div class="result-info">
+                                            <span class="result-label">${loc.label}</span>
+                                            <span class="result-type">${loc.subType}</span>
+                                        </div>
+                                        <span class="result-iata">${loc.id}</span>
+                                    `;
+                                    div.addEventListener('click', () => {
+                                        input.value = loc.id;
+                                        results.classList.add('hidden');
+                                    });
+                                    results.appendChild(div);
+                                });
+                                results.classList.remove('hidden');
+                            } else {
+                                results.classList.add('hidden');
+                            }
+                        })
+                        .catch(err => {
+                            console.error('Error fetching locations:', err);
+                            results.classList.add('hidden');
+                        });
+                }, 300);
+            });
+
+            // Close results when clicking outside
+            document.addEventListener('click', function (e) {
+                if (!input.contains(e.target) && !results.contains(e.target)) {
+                    results.classList.add('hidden');
+                }
+            });
+
+            // Show results on focus if there's a query
+            input.addEventListener('focus', function () {
+                if (this.value.length >= 2) {
+                    results.classList.remove('hidden');
+                }
+            });
+        }
+
+        setupAutocomplete('origin', 'origin-results');
+        setupAutocomplete('destination', 'destination-results');
 
         // Add animation on form focus
         const inputs = document.querySelectorAll('.input-field');
