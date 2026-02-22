@@ -123,6 +123,7 @@ def search(request):
                 'origin': origin,
                 'destination': destination,
                 'departure_date': departure_date,
+                'adults': adults,
                 'error': None
             })
             
@@ -132,6 +133,7 @@ def search(request):
                 'origin': origin,
                 'destination': destination,
                 'departure_date': departure_date,
+                'adults': locals().get('adults', 1),
                 'flights': []
             })
     

@@ -22,21 +22,24 @@
     <div class="container">
         <header class="header">
             <div class="logo">
-                <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M20 5L35 12.5V27.5L20 35L5 27.5V12.5L20 5Z" stroke="url(#gradient)" stroke-width="2"
-                        fill="none" />
-                    <path d="M20 15L28 20L20 25L12 20L20 15Z" fill="url(#gradient)" />
-                    <defs>
-                        <linearGradient id="gradient" x1="5" y1="5" x2="35" y2="35">
-                            <stop offset="0%" stop-color="#667eea" />
-                            <stop offset="100%" stop-color="#764ba2" />
-                        </linearGradient>
-                    </defs>
-                </svg>
+                <div class="logo-icon">
+                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20 5L35 12.5V27.5L20 35L5 27.5V12.5L20 5Z" stroke="url(#gradient)" stroke-width="2"
+                            fill="none" />
+                        <path d="M20 15L28 20L20 25L12 20L20 15Z" fill="url(#gradient)" />
+                        <defs>
+                            <linearGradient id="gradient" x1="5" y1="5" x2="35" y2="35">
+                                <stop offset="0%" stop-color="#6366f1" />
+                                <stop offset="100%" stop-color="#a855f7" />
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
                 <h1>FlightFinder</h1>
             </div>
             <nav class="nav">
                 <a href="/" class="nav-link">Search</a>
+                <a href="#" class="nav-link">Deals</a>
             </nav>
         </header>
 
@@ -96,8 +99,7 @@
             {% if flights %}
             <div class="results-container">
                 {% for flight in flights %}
-                <div class="flight-card glass {% if flight.is_cheapest %}best-deal-card{% endif %}"
-                    style="animation-delay: {{ forloop.counter0|add:1 }}s">
+                <div class="flight-card glass {% if flight.is_cheapest %}best-deal-card{% endif %}">
                     {% if flight.is_cheapest %}
                     <div class="best-deal-badge">
                         <span class="badge-icon">💎</span> <span class="badge-text">Best Deal</span>
