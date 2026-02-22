@@ -96,59 +96,70 @@
             {% if flights %}
             <div class="results-container">
                 {% for flight in flights %}
-                <div class="flight-card glass {% if flight.is_cheapest %}best-deal-card{% endif %}">
+                <div class="flight-card glass {% if flight.is_cheapest %}best-deal-card{% endif %}"
+                    style="animation-delay: {{ forloop.counter0|add:1 }}s">
                     {% if flight.is_cheapest %}
                     <div class="best-deal-badge">
-                        <span class="badge-icon">💎</span> Best Deal
+                        <span class="badge-icon">💎</span> <span class="badge-text">Best Deal</span>
                     </div>
                     {% endif %}
-                    <div class="flight-header">
-                        <div class="airline-info">
-                            <div class="airline-logo">{{ flight.airline }}</div>
-                            <div class="airline-details">
+
+                    <div class="flight-main-info">
+                        <div class="airline-brand">
+                            <div class="airline-logo-container">
+                                <span class="airline-code-display">{{ flight.airline }}</span>
+                            </div>
+                            <div class="airline-meta">
                                 <h3 class="airline-name">{{ flight.airline }}</h3>
-                                <p class="flight-number">Flight {{ flight.flight_number }}</p>
+                                <p class="flight-id">Flight #{{ flight.flight_number }}</p>
                             </div>
                         </div>
-                        <div class="flight-price">
-                            <span class="price-amount">{{ flight.price }}</span>
-                            <span class="price-currency">{{ flight.currency }}</span>
-                        </div>
-                    </div>
 
-                    <div class="flight-details">
-                        <div class="flight-time">
-                            <div class="time-block">
-                                <span class="time-value">{{ flight.departure_time|slice:":10" }}</span>
-                                <span class="time-label">Departure</span>
-                                <span class="airport-label">{{ flight.departure_airport }}</span>
+                        <div class="flight-journey">
+                            <div class="journey-node">
+                                <span class="node-time">{{ flight.departure_time|slice:":10" }}</span>
+                                <span class="node-airport">{{ flight.departure_airport }}</span>
                             </div>
 
-                            <div class="flight-duration">
-                                <div class="duration-line">
-                                    <div class="duration-dot"></div>
-                                    <div class="duration-bar"></div>
-                                    <div class="duration-dot"></div>
+                            <div class="journey-path">
+                                <div class="path-metrics">
+                                    <span class="path-duration">🕒 {{ flight.duration|slice:"2:" }}</span>
+                                    {% if flight.stops == 0 %}
+                                    <span class="path-stop-badge direct">Non-stop</span>
+                                    {% else %}
+                                    <span class="path-stop-badge stops">{{ flight.stops }} Stop{{ flight.stops|pluralize
+                                        }}</span>
+                                    {% endif %}
                                 </div>
-                                <span class="duration-text">{{ flight.duration|slice:"2:" }}</span>
-                                {% if flight.stops == 0 %}
-                                <span class="stops-badge direct">Direct</span>
-                                {% else %}
-                                <span class="stops-badge">{{ flight.stops }} stop{{ flight.stops|pluralize }}</span>
-                                {% endif %}
+                                <div class="path-visual">
+                                    <div class="visual-dot start"></div>
+                                    <div class="visual-line">
+                                        <div class="visual-plane">✈️</div>
+                                    </div>
+                                    <div class="visual-dot end"></div>
+                                </div>
                             </div>
 
-                            <div class="time-block">
-                                <span class="time-value">{{ flight.arrival_time|slice:":10" }}</span>
-                                <span class="time-label">Arrival</span>
-                                <span class="airport-label">{{ flight.arrival_airport }}</span>
+                            <div class="journey-node">
+                                <span class="node-time">{{ flight.arrival_time|slice:":10" }}</span>
+                                <span class="node-airport">{{ flight.arrival_airport }}</span>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="flight-footer">
-                        <div class="flight-info-text">
-                            <small style="color: #a0aec0;">Booking functionality coming soon</small>
+                        <div class="flight-pricing">
+                            <div class="price-wrapper">
+                                <span class="price-symbol">$</span>
+                                <span class="price-value">{{ flight.price }}</span>
+                            </div>
+                            <p class="price-sub">Total per adult</p>
+                            <button class="book-btn-premium">
+                                <span>Reserve Now</span>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                </svg>
+                            </button>
                         </div>
                     </div>
                 </div>
