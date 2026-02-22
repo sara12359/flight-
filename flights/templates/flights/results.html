@@ -63,18 +63,33 @@
             <div class="results-header glass">
                 <div class="route-info">
                     <div class="route-airports">
-                        <span class="airport-code">{{ origin }}</span>
-                        <svg width="30" height="20" viewBox="0 0 30 20" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <path d="M5 10H25M25 10L20 5M25 10L20 15" stroke-linecap="round" />
-                        </svg>
-                        <span class="airport-code">{{ destination }}</span>
+                        <div class="airport-group">
+                            <span class="airport-code">{{ origin }}</span>
+                            <span class="airport-sub">Origin</span>
+                        </div>
+                        <div class="route-icon">
+                            <svg width="40" height="24" viewBox="0 0 40 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M5 12H35M35 12L28 5M35 12L28 19" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                                <circle cx="5" cy="12" r="2" fill="currentColor" />
+                            </svg>
+                        </div>
+                        <div class="airport-group">
+                            <span class="airport-code">{{ destination }}</span>
+                            <span class="airport-sub">Destination</span>
+                        </div>
                     </div>
-                    <p class="route-date">{{ departure_date }}</p>
+                    <div class="route-meta">
+                        <span class="meta-item">📅 {{ departure_date }}</span>
+                        <span class="meta-item">👥 {{ adults }} Passenger{{ adults|pluralize }}</span>
+                    </div>
                 </div>
-                <div class="results-count">
-                    <span class="count-number">{{ flights|length }}</span>
-                    <span class="count-label">flights found</span>
+                <div class="results-summary">
+                    <div class="count-badge">
+                        <span class="count-number">{{ flights|length }}</span>
+                        <span class="count-label">Available Flights</span>
+                    </div>
                 </div>
             </div>
 
