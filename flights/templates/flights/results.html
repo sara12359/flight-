@@ -128,9 +128,10 @@
                                     <span class="path-duration">🕒 {{ flight.duration|slice:"2:" }}</span>
                                     {% if flight.stops == 0 %}
                                     <span class="path-stop-badge direct">Non-stop</span>
+                                    {% elif flight.stops == 1 %}
+                                    <span class="path-stop-badge stops">1 Stop</span>
                                     {% else %}
-                                    <span class="path-stop-badge stops">{{ flight.stops }} Stop{{ flight.stops|pluralize
-                                        }}</span>
+                                    <span class="path-stop-badge stops">{{ flight.stops }} Stops</span>
                                     {% endif %}
                                 </div>
                                 <div class="path-visual">
