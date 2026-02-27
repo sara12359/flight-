@@ -5,7 +5,7 @@ from .amadeus_client import AmadeusClient
 from datetime import datetime
 import re
 
-
+#
 # Initialize Amadeus client with your credentials
 API_KEY = "zI1g5568Q4zKYcD1TJzKy79AxAG6Yqup"
 API_SECRET = "NFav8fay8A1EVfnb"
